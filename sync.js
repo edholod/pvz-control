@@ -62,7 +62,7 @@ async function identify(result){
 }
 async function runSync(){
  if(syncBusy||syncConflict)return;
- if(!initData()){syncStatus('Локальный режим: Telegram не передал данные для входа. Откройте календарь инлайн-кнопкой под сообщением бота. Пока данные сохраняются только на этом устройстве.');return}
+ if(!initData()){syncStatus('Локальный режим: Telegram не передал данные для входа. Откройте «Календарь смен» кнопкой меню рядом со строкой ввода в боте. Пока данные сохраняются только на этом устройстве.');return}
  if(!navigator.onLine){syncStatus('Нет интернета. Изменения сохранены на устройстве и ожидают отправки.');return}
  if(storageFault){syncStatus('Синхронизация остановлена: проверьте локальную базу.');return}
  syncBusy=true;
