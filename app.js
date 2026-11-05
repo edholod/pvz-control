@@ -314,11 +314,11 @@ function setupSheetKeyboard(){
  const sheet=document.querySelector('.sheet');if(!sheet)return;
  const savedY=window.scrollY||0,body=document.body,previous={position:body.style.position,top:body.style.top,width:body.style.width};
  body.style.position='fixed';body.style.top=-savedY+'px';body.style.width='100%';
- const baseline=window.innerHeight;
+ const baseline=window.innerHeight,compact=(window.innerWidth||1024)<=600;
  const adjust=()=>{const v=window.visualViewport;if(!v)return;
   const height=Math.max(120,Math.min(v.height,window.innerHeight)-16);
   sheet.style.maxHeight=height+'px';
-  if(v.height<baseline*.8){sheet.style.top=Math.max(8,v.offsetTop+8)+'px';sheet.style.bottom='auto'}
+  if(compact||v.height<baseline*.8){sheet.style.top=Math.max(8,v.offsetTop+8)+'px';sheet.style.bottom='auto';if(compact)sheet.style.height=height+'px'}
   else{sheet.style.top='auto';sheet.style.bottom=Math.max(0,window.innerHeight-v.height-v.offsetTop)+'px'}
  };
  const reveal=()=>{const field=document.activeElement;if(!field||!sheet.contains(field))return;
