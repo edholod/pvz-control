@@ -135,4 +135,21 @@ body:has(.network-overview){background:#f8f8fa}
 .current-date{display:block;margin-top:7px;color:#6d6370;font-size:13px;line-height:1.4;font-weight:550;text-transform:capitalize;font-variant-numeric:tabular-nums}
 .topbar h2{margin-top:5px}
 @media(max-width:420px){.current-date{font-size:12px;max-width:calc(100vw - 100px)}}
+
+/* Calendar picker: custom modal, works in Telegram WebView on iOS and Android. */
+.date-field{display:grid;gap:7px}.date-field>label{font-size:13px;font-weight:600}
+.date-pick-trigger{width:100%;min-height:48px;display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid #dcd6df;border-radius:12px;background:#fff;color:#28242b;text-align:left;font:inherit}
+.date-pick-trigger .date-pick-label{flex:1}.date-pick-trigger .ui-icon{width:19px;height:19px}
+.date-picker-open{overflow:hidden}#date-picker-overlay{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px}
+.date-picker-backdrop{position:absolute;inset:0;background:rgba(21,17,25,.55)}
+.date-picker-panel{position:relative;width:min(100%,370px);max-height:calc(100dvh - 32px);overflow:auto;background:#fff;color:#242129;border-radius:20px;padding:18px;box-shadow:0 16px 55px #0003}
+.date-picker-head,.date-picker-month,.date-picker-footer{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.date-picker-head{margin-bottom:16px;font-size:18px}.date-picker-head button,.date-picker-month button{border:0;background:#f3f0f5;border-radius:10px;min-width:38px;min-height:38px;font-size:24px;color:#332c36}
+.date-picker-month{margin-bottom:12px}.date-picker-month strong{text-transform:capitalize}
+.date-picker-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;text-align:center}
+.date-picker-weekday{font-size:11px;color:#756e7a;padding:9px 0}
+.date-picker-day{border:0;border-radius:10px;background:transparent;aspect-ratio:1;min-width:0;padding:0;color:#242129;font-size:14px}
+.date-picker-day.today{outline:1px solid #a57d9c;outline-offset:-2px}.date-picker-day.selected{background:#ab4085;color:#fff;font-weight:700}
+.date-picker-footer{justify-content:flex-end;margin-top:16px}.date-picker-footer button{border:1px solid #e4dce4;background:#f8f5f8;border-radius:10px;padding:10px 14px;color:#332c36}
+
 </style></head><body><main id="app"></main><footer class="app-footer"><div class="app-meta" aria-label="Информация о приложении"><div class="app-meta-name">PVZ CONTROL <span>by @edholod</span></div><div class="app-meta-status">v1.3 · локальная тестовая версия · без серверной синхронизации</div></div><div class="app-bot-link"><a href="https://t.me/edholod_wbbot" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram-бот Всё о WB PVZ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Всё о WB PVZ · @edholod_wbbot</a></div></footer><div id="sheet-root"></div><script src="app.js"></script></body></html>
