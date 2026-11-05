@@ -1,0 +1,32 @@
+const {context}=require('./harness.cjs'),assert=require('node:assert/strict'),fs=require('fs');
+const a=context(),r=a.run;
+a.c.document.querySelectorAll=()=>[];
+function form(kind,values){a.c.values=values;r(`sheetKind='${kind}';submitSheet({preventDefault(){},currentTarget:values})`)}
+function call(name,values,arg=''){a.c.values=values;r(`${name}({preventDefault(){},currentTarget:values,target:values}${arg?','+arg:''})`)}
+form('point',{name:'ПВЗ Тест',market:'wb'});assert.equal(r('db.points.length'),1);
+form('person',{name:'Тестовый сотрудник',role:'employee',point:r('pointId'),rate:'1500',hourlyRate:'0'});assert.equal(r('db.people.length'),1);
+r('year=2026;month=10;');form('day',{person:r('db.people[0].id'),date:'2026-11-01'});assert.equal(r('db.shifts.length'),1);
+r('markShift(db.shifts[0].id)');assert.equal(r('shiftEarned(db.shifts[0])'),1500);
+form('payment',{person:r('db.people[0].id'),date:'2026-11-02',amount:'500',kind:'advance'});assert.equal(r('db.payments.length'),1);
+form('incident',{person:r('db.people[0].id'),date:'2026-11-02',amount:'1000',type:'брак'});assert.equal(r('db.incidents.length'),1);
+form('note',{date:'2026-11-02',text:'Тестовая заметка'});assert.equal(r('db.notes.length'),1);
+call('submitReview',{date:'2026-11-02',negative:'2',rating:'4',comment:'Проверка'},'db.people[0].id');assert.equal(r('db.reviews.length'),1);
+call('saveInstallment',{total:'1000',count:'3',first:'2026-01-31',interval:'month',basis:'informational',status:'active'},'db.incidents[0].id');assert.equal(r('db.installments[0].schedule.reduce((n,x)=>n+x.amount,0)'),1000);assert.equal(r('db.installments[0].schedule[1].date'),'2026-02-28');
+call('submitRepayment',{amount:'333.34',date:'2026-01-31',note:'Тест'},'db.incidents[0].id');assert.equal(r('incidentRepaid(db.incidents[0].id)'),333.34);
+call('saveVacantShiftSettings',{vacantShiftAlertDays:'90'});assert.equal(r('db.settings.vacantShiftAlertDays'),90);
+call('saveVacantShiftSettings',{vacantShiftAlertDays:'91'});assert.equal(r('db.settings.vacantShiftAlertDays'),90);
+call('saveAppSettings',{defaultHours:'8'});assert.equal(r('db.settings.defaultHours'),8);
+r("schedulePerson=db.people[0].id");form('schedule',{pattern:'2/2',start:'2026-11-01',months:'1'});assert.equal(r('db.shifts.length'),16);
+r('selectedDates=new Set([2,3]);bulkSelection=true');call('submitBulk',{person:r('db.people[0].id')});
+assert(r('validate(db)'));
+const raw=a.store.get('pvz-control-v1');assert.equal(context(raw).run('db.installments.length'),1);
+a.c.downloads=[];r('download=(name,content,type)=>downloads.push({name,content,type})');r('backup();exportCsv();exportPayrollCsv()');assert.equal(a.c.downloads.length,3);
+r("db.people[0].name='=CMD()';exportCsv()");assert(a.c.downloads[3].content.includes("'=CMD()"));
+a.c.printed='';a.c.open=()=>({document:{write:s=>a.c.printed=s,close(){}}});r('exportPdf()');assert(a.c.printed.includes('window.print()'));
+a.c.document.createElement=()=>({click(){}});a.c.URL={createObjectURL:blob=>{a.c.xlsx=blob;return 'blob:test'},revokeObjectURL(){}};r('exportExcel()');
+(async()=>{fs.writeFileSync('/tmp/pvz-control-test.xlsx',Buffer.from(await a.c.xlsx.arrayBuffer()));
+await r('restore({size:100,text:async()=>'+JSON.stringify(JSON.stringify({app:'PVZ_CONTROL',version:1,data:JSON.parse(raw)}))+'})');assert(r('validate(db)'));
+console.log('PASS create points/person/shift, mark worked, payment, incident, note, review');
+console.log('PASS installment rounding/month end, repayments, settings bounds, recurring schedule');
+console.log('PASS reload, backup/restore, CSV formula escaping, XLSX generation, print HTML');
+})().catch(e=>{console.error(e);process.exitCode=1});
