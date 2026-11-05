@@ -145,7 +145,14 @@ function toggleNotice(button){
  content.hidden=!expanding;
  section.classList.toggle('notice-open',expanding);
 }
-function render(){const p=activePoint();if(p)pointId=p.id;document.body.className=tab==='settings'?'settings':p?.market||'';const nav=[['calendar','Календарь','calendar-days'],['people','Сотрудники','users'],['network','Вся сеть','layout-grid'],['settings','Настройки','settings']];let h=`<div class="topbar"><div><div class="eyebrow">Управление пунктами выдачи</div><h2>${tab==='calendar'?'Календарь':tab==='people'?'Команда':tab==='network'?'Вся сеть':tab==='profile'?'Карточка сотрудника':'Настройки'}</h2></div><button class="round-add" onclick="openSheet('menu')" aria-label="Добавить">${ico('plus')}</button></div>`;
+function currentDateLabel(now=new Date()){
+ return new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(now);
+}
+function updateCurrentDate(){
+ const el=document.getElementById('current-date');
+ if(el){const now=new Date();el.textContent=currentDateLabel(now);el.dateTime=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;}
+}
+function render(){const p=activePoint();if(p)pointId=p.id;document.body.className=tab==='settings'?'settings':p?.market||'';const nav=[['calendar','Календарь','calendar-days'],['people','Сотрудники','users'],['network','Вся сеть','layout-grid'],['settings','Настройки','settings']];let h=`<div class="topbar"><div><div class="eyebrow">Управление пунктами выдачи</div><time id="current-date" class="current-date" aria-label="Сегодня">${currentDateLabel()}</time><h2>${tab==='calendar'?'Календарь':tab==='people'?'Команда':tab==='network'?'Вся сеть':tab==='profile'?'Карточка сотрудника':'Настройки'}</h2></div><button class="round-add" onclick="openSheet('menu')" aria-label="Добавить">${ico('plus')}</button></div>`;
  if(tab==='calendar'){h+=dashboard(p);h+=unclosedNotice(p?.id);h+=unstaffedNotice(p?.id)}
  h+=`<nav class="main-nav" aria-label="Основные разделы">${nav.map(([k,v,i])=>`<button class="${tab===k?'active':''}" onclick="go('${k}')">${ico(i)}<span>${v}</span></button>`).join('')}</nav>`;
  if(tab!=='settings'&&tab!=='calendar')h+=`<div class="point-switch"><select aria-label="Выбор пункта выдачи" onchange="setPoint(this.value)">${db.points.map(x=>`<option value="${esc(x.id)}" ${x.id===pointId?'selected':''}>${esc(x.name)} · ${MARKET_INFO[x.market]?.name||''}</option>`).join('')||'<option>Сначала добавьте ПВЗ</option>'}</select><button onclick="openSheet('point')" aria-label="Добавить ПВЗ">${ico('plus')}</button></div>`;
@@ -321,3 +328,6 @@ function removeShift(sid){const s=db.shifts.find(x=>x.id===sid);if(!s)return;if(
 function markShift(sid){const s=db.shifts.find(x=>x.id===sid);if(!s)return;if(commit(()=>{s.actual=!s.actual;if(s.actual){s.hours=s.hours??(Number(db.settings?.defaultHours)||12);freezeShiftRate(s)}}))openSheet('day')}
 
 render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateCurrentDate()});
+window.addEventListener('focus',updateCurrentDate);
+setInterval(updateCurrentDate,60000);
