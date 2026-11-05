@@ -18,6 +18,7 @@ const settle=async a=>{for(let i=0;i<20;i++)await new Promise(setImmediate);asse
 (async()=>{
  const a=client();await settle(a);assert.equal(rev,1);assert.equal(a.run('KEY'),'pvz-control-tg-123');console.log('PASS verified user gets isolated local namespace');
  a.run("commit(()=>db.points.push({id:'p1',name:'Первый',market:'wb'}))");await a.run('runSync()');assert.equal(server.points.length,1);console.log('PASS local edits uploaded');
+ server=structuredClone(a.run('db'));server=Object.fromEntries(Object.entries(server).reverse());a.run("sheetKind='day'");await a.run('runSync()');assert.equal(a.run('sheetKind'),'day');console.log('PASS JSONB key reordering does not close active forms');a.run("sheetKind=''");
  const b=client();await settle(b);assert.equal(b.run('db.points.length'),1);console.log('PASS second device downloads server state');
  offline=true;a.run("commit(()=>db.points[0].name='Без интернета')");await a.run('runSync()');assert.equal(server.points[0].name,'Первый');assert.equal(a.run('db.points[0].name'),'Без интернета');console.log('PASS network failure preserves local data');offline=false;
  b.run("commit(()=>db.points[0].name='Второе устройство')");await b.run('runSync()');await a.run('runSync()');assert(a.run('syncConflict'));assert.equal(a.run('db.points[0].name'),'Без интернета');assert.equal(server.points[0].name,'Второе устройство');console.log('PASS concurrent edits stop without overwriting either device');

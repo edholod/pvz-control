@@ -1,5 +1,6 @@
 'use strict';
 // No secret credentials are stored in this file. All identity checks run on the server.
+function canonical(value){if(Array.isArray(value))return '['+value.map(canonical).join(',')+']';if(value&&typeof value==='object')return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';return JSON.stringify(value)}
 const SYNC_URL='https://duerixyhzapotoeclggz.supabase.co/functions/v1/pvz-control';
 let syncBusy=false,syncUser='',syncMessage='Локальное хранение',syncConflict=false,syncTimer;
 let syncMeta={revision:0,base:null};
@@ -70,7 +71,7 @@ async function runSync(){
   const result=await api({action:'read'});await identify(result);
   const remote=result.state,local=JSON.stringify(db),base=syncMeta.base;
   if(remote){validate(remote.data);const remoteText=JSON.stringify(remote.data);
-   if(remoteText===local){syncMeta={revision:remote.revision,base:local};storeMeta()}
+   if(canonical(remote.data)===canonical(db)){syncMeta={revision:remote.revision,base:local};storeMeta()}
    else if(base===local || (!base&&!db.points.length&&!db.people.length)){
     adopt(remote.data);syncMeta={revision:remote.revision,base:JSON.stringify(db)};storeMeta();
    }else if(remote.revision!==syncMeta.revision){syncConflict=true;syncStatus('Обнаружены изменения на другом устройстве. Требуется выбрать версию.');return}
@@ -108,7 +109,7 @@ async function cloudBackup(){
   const b=await api({action:'backup',revision});validate(b.data);download('PVZ_CONTROL_cloud_'+revision+'.json',JSON.stringify({app:'PVZ_CONTROL',version:1,data:b.data}),'application/json');
  }catch{alert('Не удалось загрузить серверную копию. Попробуйте позже.')}
 }
-window.addEventListener('pvz-saved',()=>{clearTimeout(syncTimer);syncTimer=setTimeout(runSync,1000)});
+window.addEventListener('pvz-saved',()=>{if(!syncBusy)syncStatus('Изменения сохранены на устройстве; ожидают синхронизации.');clearTimeout(syncTimer);syncTimer=setTimeout(runSync,1000)});
 window.addEventListener('storage',e=>{if(e.key===KEY){syncStatus('Данные изменились в другой вкладке. Обновите страницу перед редактированием.')}});
 window.addEventListener('online',runSync);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)runSync()});
