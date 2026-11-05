@@ -117,4 +117,18 @@ body:has(.network-overview){background:#f8f8fa}
 .unclosed-notice[open]>summary{margin-bottom:10px}
 .vacant-notice>summary>.ui-icon:last-child{color:#987000}
 @media(max-width:420px){.unclosed-notice>summary{padding:12px}.notice-expanded{padding:0 12px 12px}}
+/* Notification panels: explicit hide prevents content overflow in Telegram WebViews. */
+.unclosed-notice{display:block;min-width:0;max-width:100%;overflow:hidden;padding:0}
+.unclosed-notice .notice-toggle{display:flex;width:100%;min-width:0;min-height:64px;align-items:center;gap:10px;padding:13px 15px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;cursor:pointer;box-shadow:none;white-space:normal}
+.unclosed-notice .notice-toggle>div{flex:1;min-width:0;overflow-wrap:anywhere}
+.unclosed-notice .notice-toggle strong{display:block;line-height:1.35}
+.unclosed-notice .notice-toggle p{margin:4px 0 0;line-height:1.35;overflow-wrap:anywhere}
+.unclosed-notice .notice-toggle>.ui-icon{flex-shrink:0}
+.unclosed-notice .notice-toggle>.ui-icon:last-child{margin-left:auto;transition:transform .2s}
+.unclosed-notice .notice-toggle[aria-expanded="true"]>.ui-icon:last-child{transform:rotate(90deg)}
+.unclosed-notice .notice-expanded[hidden]{display:none!important;visibility:hidden!important}
+.unclosed-notice .notice-expanded{max-width:100%;min-width:0;padding:0 15px 15px}
+.unclosed-notice .unclosed-item{min-width:0;max-width:100%}
+.unclosed-notice .unclosed-person{flex:1;min-width:0}
+@media(max-width:420px){.unclosed-notice .notice-toggle{padding:12px;gap:8px}.unclosed-notice .notice-expanded{padding:0 12px 12px}}
 </style></head><body><main id="app"></main><footer class="app-footer"><div class="app-meta" aria-label="Информация о приложении"><div class="app-meta-name">PVZ CONTROL <span>by @edholod</span></div><div class="app-meta-status">v1.3 · локальная тестовая версия · без серверной синхронизации</div></div><div class="app-bot-link"><a href="https://t.me/edholod_wbbot" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram-бот Всё о WB PVZ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Всё о WB PVZ · @edholod_wbbot</a></div></footer><div id="sheet-root"></div><script src="app.js"></script></body></html>

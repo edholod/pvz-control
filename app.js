@@ -101,7 +101,7 @@ function unclosedNotice(point){
   const w=person(s.person),p=db.points.find(p=>p.id===s.point);
   return `<button type="button" class="unclosed-item" onclick="openUnclosedShift('${esc(s.point)}','${esc(s.date)}')"><span class="unclosed-date">${esc(s.date.split('-').reverse().join('.'))}</span><span class="unclosed-person">${esc(w?.name||'Сотрудник не найден')}${point?'':`<small>${esc(p?.name||'ПВЗ')}</small>`}</span>${ico('chevron-right')}</button>`;
  }).join('');
- return `<details class="unclosed-notice" aria-label="Незакрытые смены"><summary class="unclosed-heading">${ico('alert')}<div><strong>Есть незакрытые смены</strong><p>Прошедших дат: ${days} · смен без отметки «Отработана»: ${items.length}</p></div>${ico('chevron-right')}</summary><div class="notice-expanded"><div class="unclosed-list">${list}</div>${items.length>shown.length?`<p class="unclosed-more">Показаны первые ${shown.length} из ${items.length}. Закрывайте смены через календарь.</p>`:''}<p class="unclosed-help">Нажмите на дату, чтобы проверить смену и отметить фактическую работу. Записи не закрываются автоматически.</p></div></details>`;
+ return `<section class="unclosed-notice" aria-label="Незакрытые смены"><button type="button" class="unclosed-heading notice-toggle" aria-expanded="false" onclick="toggleNotice(this)">${ico('alert')}<div><strong>Есть незакрытые смены</strong><p>Прошедших дат: ${days} · смен без отметки «Отработана»: ${items.length}</p></div>${ico('chevron-right')}</button><div class="notice-expanded" hidden><div class="unclosed-list">${list}</div>${items.length>shown.length?`<p class="unclosed-more">Показаны первые ${shown.length} из ${items.length}. Закрывайте смены через календарь.</p>`:''}<p class="unclosed-help">Нажмите на дату, чтобы проверить смену и отметить фактическую работу. Записи не закрываются автоматически.</p></div></section>`;
 }
 // Warn when no employee is scheduled for a future day. Use local calendar dates
 // to avoid UTC timezone offsets and daylight-saving surprises.
@@ -133,7 +133,17 @@ function unstaffedNotice(point){
  if(!days.length)return '';
  const range=Number(db.settings?.vacantShiftAlertDays ?? 7);
  const shown=days.slice(0,8);
- return `<details class="unclosed-notice vacant-notice" aria-label="Дни без назначенных сотрудников"><summary class="unclosed-heading">${ico('alert')}<div><strong>Не на все дни назначены сотрудники</strong><p>Ближайшие ${range} дн. (включая сегодня) · свободных дат: ${days.length}</p></div>${ico('chevron-right')}</summary><div class="notice-expanded"><div class="unclosed-list">${shown.map(d=>`<button type="button" class="unclosed-item" onclick="openUnstaffedDay('${esc(d.point)}','${esc(d.date)}')"><span class="unclosed-date">${esc(d.date.split('-').reverse().join('.'))}</span><span class="unclosed-person">Нет назначенного сотрудника${point?'':`<small>${esc(d.name)}</small>`}</span>${ico('chevron-right')}</button>`).join('')}</div>${days.length>shown.length?`<p class="unclosed-more">Показаны первые ${shown.length} из ${days.length} дат.</p>`:''}<p class="unclosed-help">Нажмите на дату, чтобы назначить сотрудника. Период предупреждений меняется в настройках.</p></div></details>`;
+ return `<section class="unclosed-notice vacant-notice" aria-label="Дни без назначенных сотрудников"><button type="button" class="unclosed-heading notice-toggle" aria-expanded="false" onclick="toggleNotice(this)">${ico('alert')}<div><strong>Не на все дни назначены сотрудники</strong><p>Ближайшие ${range} дн. (включая сегодня) · свободных дат: ${days.length}</p></div>${ico('chevron-right')}</button><div class="notice-expanded" hidden><div class="unclosed-list">${shown.map(d=>`<button type="button" class="unclosed-item" onclick="openUnstaffedDay('${esc(d.point)}','${esc(d.date)}')"><span class="unclosed-date">${esc(d.date.split('-').reverse().join('.'))}</span><span class="unclosed-person">Нет назначенного сотрудника${point?'':`<small>${esc(d.name)}</small>`}</span>${ico('chevron-right')}</button>`).join('')}</div>${days.length>shown.length?`<p class="unclosed-more">Показаны первые ${shown.length} из ${days.length} дат.</p>`:''}<p class="unclosed-help">Нажмите на дату, чтобы назначить сотрудника. Период предупреждений меняется в настройках.</p></div></section>`;
+}
+function toggleNotice(button){
+ const section=button.closest('.unclosed-notice');
+ if(!section)return;
+ const content=section.querySelector('.notice-expanded');
+ if(!content)return;
+ const expanding=button.getAttribute('aria-expanded')!=='true';
+ button.setAttribute('aria-expanded',String(expanding));
+ content.hidden=!expanding;
+ section.classList.toggle('notice-open',expanding);
 }
 function render(){const p=activePoint();if(p)pointId=p.id;document.body.className=tab==='settings'?'settings':p?.market||'';const nav=[['calendar','Календарь','calendar-days'],['people','Сотрудники','users'],['network','Вся сеть','layout-grid'],['settings','Настройки','settings']];let h=`<div class="topbar"><div><div class="eyebrow">Управление пунктами выдачи</div><h2>${tab==='calendar'?'Календарь':tab==='people'?'Команда':tab==='network'?'Вся сеть':tab==='profile'?'Карточка сотрудника':'Настройки'}</h2></div><button class="round-add" onclick="openSheet('menu')" aria-label="Добавить">${ico('plus')}</button></div>`;
  if(tab==='calendar'){h+=dashboard(p);h+=unclosedNotice(p?.id);h+=unstaffedNotice(p?.id)}
