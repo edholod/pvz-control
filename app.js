@@ -309,7 +309,30 @@ function ico(name){return `<svg class="ui-icon" viewBox="0 0 24 24" fill="none" 
 let profileId='';let sheetKind='';
 let sheetCleanup=()=>{};
 function closeSheet(){sheetCleanup();closeDatePicker();document.getElementById('sheet-root').innerHTML='';sheetKind='';document.body.classList.remove('sheet-open')}
-function setupSheetKeyboard(){sheetCleanup();document.body.classList.add('sheet-open');const sheet=document.querySelector('.sheet');if(!sheet)return;const adjust=()=>{const v=window.visualViewport;if(!v)return;sheet.style.bottom=Math.max(0,window.innerHeight-v.height-v.offsetTop)+'px';sheet.style.maxHeight=Math.min(v.height,window.innerHeight)+'px'};sheetCleanup=()=>{window.visualViewport?.removeEventListener('resize',adjust);window.visualViewport?.removeEventListener('scroll',adjust)};adjust();window.visualViewport?.addEventListener('resize',adjust,{once:false});window.visualViewport?.addEventListener('scroll',adjust,{once:false});sheet.addEventListener('focusin',e=>{if(e.target.matches('input,textarea,select'))setTimeout(()=>e.target.scrollIntoView({block:'center',behavior:'smooth'}),180)})}
+function setupSheetKeyboard(){
+ sheetCleanup();document.body.classList.add('sheet-open');
+ const sheet=document.querySelector('.sheet');if(!sheet)return;
+ const savedY=window.scrollY||0,body=document.body,previous={position:body.style.position,top:body.style.top,width:body.style.width};
+ body.style.position='fixed';body.style.top=-savedY+'px';body.style.width='100%';
+ const baseline=window.innerHeight;
+ const adjust=()=>{const v=window.visualViewport;if(!v)return;
+  const height=Math.max(120,Math.min(v.height,window.innerHeight)-16);
+  sheet.style.maxHeight=height+'px';
+  if(v.height<baseline*.8){sheet.style.top=Math.max(8,v.offsetTop+8)+'px';sheet.style.bottom='auto'}
+  else{sheet.style.top='auto';sheet.style.bottom=Math.max(0,window.innerHeight-v.height-v.offsetTop)+'px'}
+ };
+ const reveal=()=>{const field=document.activeElement;if(!field||!sheet.contains(field))return;
+  const box=field.getBoundingClientRect(),bounds=sheet.getBoundingClientRect();
+  if(box.bottom>bounds.bottom-24)sheet.scrollTop+=box.bottom-bounds.bottom+24;
+  else if(box.top<bounds.top+24)sheet.scrollTop-=bounds.top+24-box.top;
+ };
+ let focusTimer;
+ const onFocus=()=>{clearTimeout(focusTimer);focusTimer=setTimeout(()=>{adjust();reveal()},220)};
+ const onResize=()=>{adjust();reveal()};
+ sheetCleanup=()=>{clearTimeout(focusTimer);window.visualViewport?.removeEventListener('resize',onResize);window.visualViewport?.removeEventListener('scroll',adjust);sheet.removeEventListener('focusin',onFocus);Object.assign(body.style,previous);window.scrollTo?.(0,savedY)};
+ adjust();window.visualViewport?.addEventListener('resize',onResize);window.visualViewport?.addEventListener('scroll',adjust);sheet.addEventListener('focusin',onFocus);
+}
+
 function field(label,name,type='text',extra=''){
  if((name==='date'||name==='start'||name==='first')&&(type==='text'||type==='date')){
   const value=(extra.match(/value="(\d{4}-\d{2}-\d{2})"/)||[])[1]||'';

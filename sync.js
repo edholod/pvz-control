@@ -4,14 +4,14 @@ function canonical(value){if(Array.isArray(value))return '['+value.map(canonical
 const SYNC_URL='https://duerixyhzapotoeclggz.supabase.co/functions/v1/pvz-control';
 let syncBusy=false,syncUser='',syncMessage='Локальное хранение',syncConflict=false,syncTimer;
 let syncMeta={revision:0,base:null};
-const tg=window.Telegram?.WebApp;
-try{tg?.ready();tg?.expand()}catch{}
+function prepareTelegram(){try{const app=window.Telegram?.WebApp;app?.ready();app?.expand()}catch{}}
+prepareTelegram();
 function initData(){
  const sdk=window.Telegram?.WebApp?.initData;if(sdk)return sdk;
  // Telegram's signed launch data is also present when its optional SDK cannot load.
  return new URLSearchParams(location.hash.slice(1)).get('tgWebAppData')||'';
 }
-function syncStatus(message){syncMessage=message;const el=document.getElementById('sync-status');if(el)el.textContent=message;syncPanel()}
+function syncStatus(message){syncMessage=message;let banner=document.getElementById('connection-banner');if(!banner){banner=document.createElement('div');banner.id='connection-banner';banner.setAttribute('role','status');document.body.prepend(banner)}banner.textContent=message;banner.className=syncUser?'connection-banner':'connection-banner connection-local';const el=document.getElementById('sync-status');if(el)el.textContent=message;syncPanel()}
 function syncPanel(){
  let panel=document.getElementById('sync-panel');
  if(!panel){panel=document.createElement('section');panel.id='sync-panel';panel.className='sync-panel';document.querySelector('.app-footer')?.prepend(panel)}
@@ -62,7 +62,7 @@ async function identify(result){
 }
 async function runSync(){
  if(syncBusy||syncConflict)return;
- if(!initData()){syncStatus('Откройте приложение кнопкой внутри Telegram для защищённой синхронизации. Сейчас данные сохраняются только на устройстве.');return}
+ if(!initData()){syncStatus('Локальный режим: Telegram не передал данные для входа. Откройте календарь инлайн-кнопкой под сообщением бота. Пока данные сохраняются только на этом устройстве.');return}
  if(!navigator.onLine){syncStatus('Нет интернета. Изменения сохранены на устройстве и ожидают отправки.');return}
  if(storageFault){syncStatus('Синхронизация остановлена: проверьте локальную базу.');return}
  syncBusy=true;
@@ -115,3 +115,6 @@ window.addEventListener('online',runSync);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)runSync()});
 setInterval(()=>{if(!document.hidden)runSync()},30000);
 syncStatus('Подключение…');runSync();
+
+window.addEventListener('load',()=>{prepareTelegram();runSync()});
+let telegramChecks=0;const telegramStartup=setInterval(()=>{prepareTelegram();if(initData()){clearInterval(telegramStartup);runSync()}else if(++telegramChecks>=20)clearInterval(telegramStartup)},500);

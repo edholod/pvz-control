@@ -12,3 +12,4 @@ jobs:
       - run: node tests/core.cjs
       - run: node tests/sync.cjs
       - run: node tests/flows.cjs
+      - run: node tests/ios.cjs
