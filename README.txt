@@ -1,4 +1,5 @@
-PVZ CONTROL — dashboard concept integrated into existing app.
-Open index.html on GitHub Pages. Existing localStorage key pvz-control-v1 preserved.
-Dashboard metrics are based on real saved records, not demo values.
-No server sync or Telegram auth. Test with a backup before using live data.
+PVZ CONTROL — marketplace icons update.
+Replaced ONLY the storefront icon at the upper-right of the marketplace panel with marketplace-specific minimalist SVG marks: WB, OZON, Яндекс Маркет.
+Icons follow brand-inspired colors. Marketplace tabs and PVZ names remain unchanged.
+Existing localStorage key pvz-control-v1 and application data model preserved.
+This is a test build; browser and iPhone UI not verified.

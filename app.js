@@ -54,6 +54,13 @@ const patternDays=['2/2','3/2','2/3','1/1','2/1','1/2','5/2','2/5','7/0','5/2 (�
 const colors=['#B99CDA','#8DC9C3','#E5AD86','#A6C8E7','#D5B77A','#C5ACD5'];
 const tabs=[['calendar','Календарь'],['people','Сотрудники'],['network','Вся сеть'],['finance','Финансы'],['settings','Настройки']];
 const MARKET_INFO={wb:{name:'Wildberries',short:'WB'},ozon:{name:'Ozon',short:'Ozon'},ym:{name:'Яндекс Маркет',short:'Я.Маркет'}};
+// Minimalist marketplace-specific outline icon, used ONLY in the panel heading.
+// Text is vector SVG, not an emoji or external image; currentColor follows the marketplace palette.
+function marketStoreIcon(market){
+ const word={wb:'WB',ozon:'OZON',ym:'М'}[market]||'ПВЗ';
+ const size=market==='ozon'?'6.1':market==='wb'?'9.5':'13';
+ return `<svg class="market-store-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 18 12 7h24l4 11v23H8V18Z" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 18h32M17 7h14" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/><text x="24" y="32" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="${size}" font-weight="800" fill="currentColor">${word}</text></svg>`;
+}
 function setMarketplace(market){const found=db.points.find(p=>p.market===market);if(!found)return;pointId=found.id;bulkSelection=false;selectedDates.clear();render()}
 function setPoint(pid){if(!db.points.some(p=>p.id===pid))return;pointId=pid;bulkSelection=false;selectedDates.clear();render()}
 function dashboard(p){
@@ -69,7 +76,7 @@ function dashboard(p){
  const market=MARKET_INFO[p.market];
  const options=db.points.filter(x=>x.market===p.market).map(x=>`<option value="${esc(x.id)}" ${x.id===p.id?'selected':''}>${esc(x.name)}</option>`).join('');
  const stat=(icon,value,label)=>`<div class="dashboard-stat">${ico(icon)}<strong>${value}</strong><span>${label}</span></div>`;
- return `<section class="market-dashboard" aria-label="Обзор пункта выдачи"><div class="market-hint">Выберите маркетплейс</div><div class="market-choices">${choices}</div><div class="market-panel" data-market="${p.market}"><div class="market-panel-heading"><div><span class="market-kicker">Панель управления</span><h3>${market.name}</h3></div>${ico('store')}</div><div class="dashboard-point"><label for="dashboard-point-select">Пункт выдачи</label><select id="dashboard-point-select" onchange="setPoint(this.value)">${options}</select></div><div class="dashboard-stats">${stat('calendar-days',shifts.length,'Смен в месяце')}${stat('users',staff,'Сотрудников')}${stat('alert',incidents.length,'Открытых проблем')}${stat('wallet',pending,'Активных рассрочек')}</div></div></section>`;
+ return `<section class="market-dashboard" aria-label="Обзор пункта выдачи"><div class="market-hint">Выберите маркетплейс</div><div class="market-choices">${choices}</div><div class="market-panel" data-market="${p.market}"><div class="market-panel-heading"><div><span class="market-kicker">Панель управления</span><h3>${market.name}</h3></div>${marketStoreIcon(p.market)}</div><div class="dashboard-point"><label for="dashboard-point-select">Пункт выдачи</label><select id="dashboard-point-select" onchange="setPoint(this.value)">${options}</select></div><div class="dashboard-stats">${stat('calendar-days',shifts.length,'Смен в месяце')}${stat('users',staff,'Сотрудников')}${stat('alert',incidents.length,'Открытых проблем')}${stat('wallet',pending,'Активных рассрочек')}</div></div></section>`;
 }
 function render(){const p=activePoint();if(p)pointId=p.id;document.body.className=tab==='settings'?'settings':p?.market||'';const nav=[['calendar','Календарь','calendar-days'],['people','Сотрудники','users'],['network','Вся сеть','layout-grid'],['settings','Настройки','settings']];let h=`<div class="topbar"><div><div class="eyebrow">Управление пунктами выдачи</div><h2>${tab==='calendar'?'Календарь':tab==='people'?'Команда':tab==='network'?'Вся сеть':tab==='profile'?'Карточка сотрудника':'Настройки'}</h2></div><button class="round-add" onclick="openSheet('menu')" aria-label="Добавить">${ico('plus')}</button></div>`;
  if(tab==='calendar')h+=dashboard(p);
