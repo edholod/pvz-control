@@ -26,6 +26,8 @@ a.c.printed='';a.c.open=()=>({document:{write:s=>a.c.printed=s,close(){}}});r('e
 a.c.document.createElement=()=>({click(){}});a.c.URL={createObjectURL:blob=>{a.c.xlsx=blob;return 'blob:test'},revokeObjectURL(){}};r('exportExcel()');
 (async()=>{fs.writeFileSync('/tmp/pvz-control-test.xlsx',Buffer.from(await a.c.xlsx.arrayBuffer()));
 await r('restore({size:100,text:async()=>'+JSON.stringify(JSON.stringify({app:'PVZ_CONTROL',version:1,data:JSON.parse(raw)}))+'})');assert(r('validate(db)'));
+const damaged=context('{broken');damaged.c.download=()=>{};damaged.c.payload=JSON.stringify({app:'PVZ_CONTROL',version:1,data:JSON.parse(raw)});await damaged.run('restore({size:100,text:async()=>payload})');assert.equal(damaged.run('storageFault'),false);assert.equal(damaged.store.get('pvz-control-v1-damaged'),'{broken');
+console.log('PASS damaged storage recovery preserves original raw copy');
 console.log('PASS create points/person/shift, mark worked, payment, incident, note, review');
 console.log('PASS installment rounding/month end, repayments, settings bounds, recurring schedule');
 console.log('PASS reload, backup/restore, CSV formula escaping, XLSX generation, print HTML');

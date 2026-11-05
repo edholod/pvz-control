@@ -24,7 +24,7 @@ function localRecovery(){
  download('PVZ_CONTROL_recovery_'+Date.now()+'.json',JSON.stringify({app:'PVZ_CONTROL',version:1,data:item.data}),'application/json');
  }catch{alert('Не удалось прочитать контрольные копии.')}
 }
-function downloadRawStorage(){download('PVZ_CONTROL_raw_'+Date.now()+'.txt',localStorage.getItem(KEY)||'', 'text/plain')}
+function downloadRawStorage(){download('PVZ_CONTROL_raw_'+Date.now()+'.txt',localStorage.getItem(KEY+'-damaged')||localStorage.getItem(KEY)||'', 'text/plain')}
 async function api(payload){
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
  try{
