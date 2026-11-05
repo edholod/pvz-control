@@ -18,4 +18,34 @@ header{background:#ffffffd9;border-color:#ffffff99}button{border-color:#ded8e0;c
 .person-link{border:0;background:transparent;text-align:left;font-weight:700;text-decoration:underline;text-decoration-color:#b8b5c0;text-underline-offset:4px}.metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.metric-grid>div{background:#f5f4f8;padding:14px;border-radius:13px;min-width:0}.metric-grid small{display:block;font-size:11px}.metric-grid strong{display:block;font-size:17px;margin-top:5px;overflow-wrap:anywhere}.review-warning{background:#fff0ed;color:#a42621;border-radius:12px;padding:12px;font-size:13px;font-weight:650}body.wb .metric-grid>div{background:#fff0f7}body.ozon .metric-grid>div{background:#eef4ff}body.ym .metric-grid>div{background:#fff8e3}
  .ledger-box{margin-top:12px;padding:12px;border-radius:12px;background:#f3f4f8;border:1px solid #e0e1e8;display:grid;gap:6px;font-size:13px} .tools-grid button{overflow-wrap:anywhere} /* Calendar: 2.5px continuous outline on every date, colored by assigned staff */
 .calendar .day{border-width:2.5px!important;border-style:solid!important;background-clip:padding-box,border-box;box-shadow:none!important}
-</style></head><body><header><h1>PVZ CONTROL <small>by @edholod</small></h1><small>v1.3 · локальная тестовая версия · без серверной синхронизации</small></header><main id="app"></main><footer class="app-footer"><a href="https://t.me/edholod_wbbot" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram-бот Всё о WB PVZ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Всё о WB PVZ · @edholod_wbbot</a></footer><div id="sheet-root"></div><script src="app.js"></script></body></html>
+
+/* Footer: application information below all page content; bot link is last. */
+.app-footer{width:100%;margin-top:auto;padding:28px 16px max(28px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;background:transparent}
+.app-meta{width:min(100%,850px);padding:17px 12px 0;border-top:1px solid rgba(70,65,75,.18);color:#575461}
+.app-meta-name{font-size:14px;font-weight:700;letter-spacing:.02em;color:#393641}
+.app-meta-name span{font-weight:500}
+.app-meta-status{margin-top:6px;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.app-bot-link{margin-top:2px;padding-bottom:0}
+.app-bot-link a{color:#415675}
+@media print{.app-footer{display:none!important}}
+
+/* Marketplace dashboard: screenshot concept, powered by actual saved PVZ data */
+.market-dashboard{margin:0 0 16px;padding:16px;border:1px solid #e3e0e5;border-radius:22px;background:#ffffffee;box-shadow:0 5px 18px #292a3508}
+.market-hint{font-size:15px;margin:0 0 14px;font-weight:500;color:#333}
+.market-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.market-choice{position:relative;min-height:76px;border:1.5px solid transparent;border-radius:15px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;font-weight:800;font-size:16px;transition:border-color .15s ease,box-shadow .15s ease}
+.market-choice[data-market="wb"]{background:#fbe8f2;color:#c23880;border-color:#f2bbd5}
+.market-choice[data-market="ozon"]{background:#e3eeff;color:#326bc7;border-color:#afcfff}
+.market-choice[data-market="ym"]{background:#fff3cb;color:#8c6800;border-color:#f2d98e}
+.market-choice.selected[data-market="wb"]{border:2px solid #d52d7b}.market-choice.selected[data-market="ozon"]{border:2px solid #3674d6}.market-choice.selected[data-market="ym"]{border:2px solid #aa7e00}
+.market-tick{font-size:16px;line-height:1}.market-choice:focus-visible{outline:3px solid #30323d;outline-offset:3px}
+.market-panel{padding:16px;border-radius:18px;background:#fbe7f1;color:#28262a}.market-panel[data-market="ozon"]{background:#e4efff}.market-panel[data-market="ym"]{background:#fff4cc}
+.market-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 15px}.market-panel-heading>.ui-icon{width:26px;height:26px;color:#c23880}.market-panel[data-market="ozon"] .market-panel-heading>.ui-icon{color:#326bc7}.market-panel[data-market="ym"] .market-panel-heading>.ui-icon{color:#a47b00}
+.market-kicker{color:#bf3c7d;font-size:12px}.market-panel[data-market="ozon"] .market-kicker{color:#326bc7}.market-panel[data-market="ym"] .market-kicker{color:#977000}
+.market-panel-heading h3{font-size:23px;letter-spacing:-.5px;margin:4px 0 0;color:#242228}
+.dashboard-point{background:#fff;border-radius:15px;padding:13px 14px;margin-bottom:12px}.dashboard-point label{font-size:11px;color:#747079;margin:0 0 4px}.dashboard-point select{display:block;width:100%;max-width:100%;padding:4px 26px 4px 0;border:0;background:transparent;font-size:18px;font-weight:750;color:#27242b;min-height:36px;outline-offset:4px}
+.dashboard-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.dashboard-stat{min-height:113px;background:#fff;border-radius:15px;padding:14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}.dashboard-stat .ui-icon{width:20px;height:20px;color:#c23880}.market-panel[data-market="ozon"] .dashboard-stat .ui-icon{color:#326bc7}.market-panel[data-market="ym"] .dashboard-stat .ui-icon{color:#a47b00}.dashboard-stat strong{font-size:25px;line-height:1.1}.dashboard-stat span{font-size:12px;color:#69656b}
+.empty-dashboard p{color:#69656b}.market-dashboard+.main-nav{margin:0 0 14px}
+@media(max-width:420px){.market-dashboard{padding:12px;border-radius:18px}.market-choices{gap:7px}.market-choice{min-height:67px;font-size:13px;padding:8px 2px}.market-panel{padding:12px}.dashboard-stat{padding:12px;min-height:105px}.dashboard-stat strong{font-size:23px}}
+@media print{.market-choices,.market-dashboard{display:none!important}}
+</style></head><body><main id="app"></main><footer class="app-footer"><div class="app-meta" aria-label="Информация о приложении"><div class="app-meta-name">PVZ CONTROL <span>by @edholod</span></div><div class="app-meta-status">v1.3 · локальная тестовая версия · без серверной синхронизации</div></div><div class="app-bot-link"><a href="https://t.me/edholod_wbbot" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram-бот Всё о WB PVZ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Всё о WB PVZ · @edholod_wbbot</a></div></footer><div id="sheet-root"></div><script src="app.js"></script></body></html>
