@@ -103,4 +103,18 @@ body:has(.network-overview){background:#f8f8fa}
 @media(max-width:420px){.unclosed-notice{padding:12px}.unclosed-item{gap:8px}.unclosed-date{font-size:12px}}
 @media print{.unclosed-notice{display:none!important}}
 .vacant-notice{background:#fffdf1;border-color:#e4ce80}.vacant-notice .unclosed-heading>.ui-icon{color:#987000}.vacant-notice .unclosed-item{border-color:#e9e0b6}.vacant-notice .unclosed-help{color:#736632}
+/* Compact, accessible notification accordions. Closed by default. */
+.unclosed-notice{padding:0;overflow:hidden}
+.unclosed-notice>summary{list-style:none;cursor:pointer;padding:14px 15px;align-items:center;min-height:66px;user-select:none}
+.unclosed-notice>summary::-webkit-details-marker{display:none}
+.unclosed-notice>summary::marker{content:''}
+.unclosed-notice>summary>div{flex:1;min-width:0}
+.unclosed-notice>summary p{margin-bottom:0}
+.unclosed-notice>summary>.ui-icon:last-child{margin:0 0 0 auto;flex:none;width:18px;height:18px;color:#92664e;transition:transform .18s ease}
+.unclosed-notice[open]>summary>.ui-icon:last-child{transform:rotate(90deg)}
+.unclosed-notice>summary:focus-visible{outline:3px solid #a76e46;outline-offset:-4px;border-radius:16px}
+.notice-expanded{padding:0 15px 15px}
+.unclosed-notice[open]>summary{margin-bottom:10px}
+.vacant-notice>summary>.ui-icon:last-child{color:#987000}
+@media(max-width:420px){.unclosed-notice>summary{padding:12px}.notice-expanded{padding:0 12px 12px}}
 </style></head><body><main id="app"></main><footer class="app-footer"><div class="app-meta" aria-label="Информация о приложении"><div class="app-meta-name">PVZ CONTROL <span>by @edholod</span></div><div class="app-meta-status">v1.3 · локальная тестовая версия · без серверной синхронизации</div></div><div class="app-bot-link"><a href="https://t.me/edholod_wbbot" target="_blank" rel="noopener noreferrer" aria-label="Открыть Telegram-бот Всё о WB PVZ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4Z"/></svg>Всё о WB PVZ · @edholod_wbbot</a></div></footer><div id="sheet-root"></div><script src="app.js"></script></body></html>
