@@ -1,7 +1,7 @@
-PVZ CONTROL — marketplace icons update.
-Replaced ONLY the storefront icon at the upper-right of the marketplace panel with marketplace-specific minimalist SVG marks: WB, OZON, Яндекс Маркет.
-Icons follow brand-inspired colors. Marketplace tabs and PVZ names remain unchanged.
-Existing localStorage key pvz-control-v1 and application data model preserved.
-This is a test build; browser and iPhone UI not verified.
+PVZ CONTROL — обновление раздела «Настройки»
 
-Обновление: раздел «Вся сеть» оформлен цветными карточками по маркетплейсам, добавлены показатели и фильтры; сводный календарь сохранён.
+Загрузите index.html, app.js и README.txt в корень GitHub Pages репозитория с заменой.
+
+Добавлено: адаптивная сетка разделов настроек, поиск, редактирование названия и маркетплейса ПВЗ, часы смены по умолчанию, переход к настройке отзывов, экспорт, резервные копии, статус локального хранения.
+
+Данные продолжают храниться в localStorage по ключу pvz-control-v1. Перед обновлением сохраните резервную копию JSON. Приложение остаётся тестовым и не имеет серверной синхронизации.
